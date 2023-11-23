@@ -1,16 +1,26 @@
 <h1 align="center">● Open Interpreter</h1>
 
 <p align="center">
-    <a href="https://discord.gg/6p3fD6rBVm"><img alt="Discord" src="https://img.shields.io/discord/1146610656779440188?logo=discord&style=flat&logoColor=white"></a> <img src="https://img.shields.io/static/v1?label=license&message=MIT&color=white&style=flat" alt="License">
-<br>
+    <a href="https://discord.gg/6p3fD6rBVm">
+        <img alt="Discord" src="https://img.shields.io/discord/1146610656779440188?logo=discord&style=flat&logoColor=white"/></a>
+    <a href="docs/README_JA.md"><img src="https://img.shields.io/badge/ドキュメント-日本語-white.svg" alt="JA doc"/></a>
+    <a href="docs/README_ZH.md"><img src="https://img.shields.io/badge/文档-中文版-white.svg" alt="ZH doc"/></a>
+    <a href="docs/README_IN.md"><img src="https://img.shields.io/badge/Hindi-white.svg" alt="IN doc"/></a>
+    <img src="https://img.shields.io/static/v1?label=license&message=MIT&color=white&style=flat" alt="License"/>
+    <br>
+    <br>
     <b>Let language models run code on your computer.</b><br>
     An open-source, locally running implementation of OpenAI's Code Interpreter.<br>
-    <br><a href="https://openinterpreter.com">Get early access to the desktop application.</a><br>
+    <br><a href="https://openinterpreter.com">Get early access to the desktop app</a>‎ ‎ |‎ ‎ <b><a href="https://docs.openinterpreter.com/">Read our new docs</a></b><br>
 </p>
 
 <br>
 
 ![poster](https://github.com/KillianLucas/open-interpreter/assets/63927363/08f0d493-956b-4d49-982e-67d4b20c4b56)
+
+<br>
+
+**Update:** ● 0.1.12 supports `interpreter --vision` ([documentation](https://docs.openinterpreter.com/usage/terminal/vision))
 
 <br>
 
@@ -45,6 +55,10 @@ https://github.com/KillianLucas/open-interpreter/assets/63927363/37152071-680d-4
 
 [![Open In Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/drive/1WKmRXZgsErej2xUriKzxrEAXdxMSgWbb?usp=sharing)
 
+#### Along with an example implementation of a voice interface (inspired by _Her_):
+
+[![Open In Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/drive/1NojYGHDgxH6Y1G1oxThEBBb2AtyODBIK)
+
 ## Quick Start
 
 ```shell
@@ -73,18 +87,28 @@ interpreter.chat() # Starts an interactive chat
 OpenAI's release of [Code Interpreter](https://openai.com/blog/chatgpt-plugins#code-interpreter) with GPT-4 presents a fantastic opportunity to accomplish real-world tasks with ChatGPT.
 
 However, OpenAI's service is hosted, closed-source, and heavily restricted:
+
 - No internet access.
-- [Limited set  of pre-installed packages](https://wfhbrian.com/mastering-chatgpts-code-interpreter-list-of-python-packages/).
+- [Limited set of pre-installed packages](https://wfhbrian.com/mastering-chatgpts-code-interpreter-list-of-python-packages/).
 - 100 MB maximum upload, 120.0 second runtime limit.
 - State is cleared (along with any generated files or links) when the environment dies.
 
 ---
 
-Open Interpreter overcomes these limitations by running on your local environment. It has full access to the internet, isn't restricted by time or file size, and can utilize any package or library.
+Open Interpreter overcomes these limitations by running in your local environment. It has full access to the internet, isn't restricted by time or file size, and can utilize any package or library.
 
 This combines the power of GPT-4's Code Interpreter with the flexibility of your local development environment.
 
 ## Commands
+
+**Update:** The Generator Update (0.1.5) introduced streaming:
+
+```python
+message = "What operating system are we on?"
+
+for chunk in interpreter.chat(message, display=False, stream=True):
+  print(chunk)
+```
 
 ### Interactive Chat
 
@@ -98,6 +122,15 @@ Or `interpreter.chat()` from a .py file:
 
 ```python
 interpreter.chat()
+```
+
+**You can also stream each chunk:**
+
+```python
+message = "What operating system are we on?"
+
+for chunk in interpreter.chat(message, display=False, stream=True):
+  print(chunk)
 ```
 
 ### Programmatic Chat
@@ -124,13 +157,13 @@ interpreter.reset()
 
 ### Save and Restore Chats
 
-`interpreter.chat()` returns a List of messages when return_messages=True, which can be used to resume a conversation with `interpreter.load(messages)`:
+`interpreter.chat()` returns a List of messages, which can be used to resume a conversation with `interpreter.messages = messages`:
 
 ```python
-messages = interpreter.chat("My name is Killian.", return_messages=True) # Save messages to 'messages'
+messages = interpreter.chat("My name is Killian.") # Save messages to 'messages'
 interpreter.reset() # Reset interpreter ("Killian" will be forgotten)
 
-interpreter.load(messages) # Resume chat from 'messages' ("Killian" will be remembered)
+interpreter.messages = messages # Resume chat from 'messages' ("Killian" will be remembered)
 ```
 
 ### Customize System Message
@@ -144,56 +177,180 @@ Run shell commands with -y so the user doesn't have to confirm them.
 print(interpreter.system_message)
 ```
 
-### Change the Model
+### Change your Language Model
 
-ⓘ  **Issues running locally?** Read our new [GPU setup guide](/docs/GPU.md) and [Windows setup guide](/docs/WINDOWS.md).
+Open Interpreter uses [LiteLLM](https://docs.litellm.ai/docs/providers/) to connect to hosted language models.
 
-You can run `interpreter` in local mode from the command line to use `Code Llama`:
-
-```shell
-interpreter --local
-```
-
-For `gpt-3.5-turbo`, use fast mode:
+You can change the model by setting the model parameter:
 
 ```shell
-interpreter --fast
+interpreter --model gpt-3.5-turbo
+interpreter --model claude-2
+interpreter --model command-nightly
 ```
 
-In Python, you will need to set the model manually:
+In Python, set the model on the object:
 
 ```python
 interpreter.model = "gpt-3.5-turbo"
 ```
 
-### Azure Support
+[Find the appropriate "model" string for your language model here.](https://docs.litellm.ai/docs/providers/)
 
-To connect to an Azure deployment, the `--use-azure` flag will walk you through setting this up:
+### Running Open Interpreter locally
 
+Open Interpreter uses [LM Studio](https://lmstudio.ai/) to connect to local language models (experimental).
+
+Simply run `interpreter` in local mode from the command line:
+
+```shell
+interpreter --local
 ```
-interpreter --use-azure
-```
 
-In Python, set the following variables:
+**You will need to run LM Studio in the background.**
 
-```
-interpreter.use_azure = True
-interpreter.api_key = "your_openai_api_key"
-interpreter.azure_api_base = "your_azure_api_base"
-interpreter.azure_api_version = "your_azure_api_version"
-interpreter.azure_deployment_name = "your_azure_deployment_name"
+1. Download [https://lmstudio.ai/](https://lmstudio.ai/) then start it.
+2. Select a model then click **↓ Download**.
+3. Click the **↔️** button on the left (below 💬).
+4. Select your model at the top, then click **Start Server**.
+
+Once the server is running, you can begin your conversation with Open Interpreter.
+
+(When you run the command `interpreter --local`, the steps above will be displayed.)
+
+> **Note:** Local mode sets your `context_window` to 3000, and your `max_tokens` to 1000. If your model has different requirements, set these parameters manually (see below).
+
+#### Context Window, Max Tokens
+
+You can modify the `max_tokens` and `context_window` (in tokens) of locally running models.
+
+For local mode, smaller context windows will use less RAM, so we recommend trying a much shorter window (~1000) if it's is failing / if it's slow. Make sure `max_tokens` is less than `context_window`.
+
+```shell
+interpreter --local --max_tokens 1000 --context_window 3000
 ```
 
 ### Debug mode
 
-To help contributors inspect Open Interpreter, `--debug` mode is highly verbose. 
+To help contributors inspect Open Interpreter, `--debug` mode is highly verbose.
 
 You can activate debug mode by using it's flag (`interpreter --debug`), or mid-chat:
 
-```
+```shell
 $ interpreter
 ...
-> %debug # <- Turns on debug mode
+> %debug true <- Turns on debug mode
+
+> %debug false <- Turns off debug mode
+```
+
+### Interactive Mode Commands
+
+In the interactive mode, you can use the below commands to enhance your experience. Here's a list of available commands:
+
+**Available Commands:**
+
+- `%debug [true/false]`: Toggle debug mode. Without arguments or with `true` it
+  enters debug mode. With `false` it exits debug mode.
+- `%reset`: Resets the current session's conversation.
+- `%undo`: Removes the previous user message and the AI's response from the message history.
+- `%save_message [path]`: Saves messages to a specified JSON path. If no path is provided, it defaults to `messages.json`.
+- `%load_message [path]`: Loads messages from a specified JSON path. If no path is provided, it defaults to `messages.json`.
+- `%tokens [prompt]`: (_Experimental_) Calculate the tokens that will be sent with the next prompt as context and estimate their cost. Optionally calculate the tokens and estimated cost of a `prompt` if one is provided. Relies on [LiteLLM's `cost_per_token()` method](https://docs.litellm.ai/docs/completion/token_usage#2-cost_per_token) for estimated costs.
+- `%help`: Show the help message.
+
+### Configuration
+
+Open Interpreter allows you to set default behaviors using a `config.yaml` file.
+
+This provides a flexible way to configure the interpreter without changing command-line arguments every time.
+
+Run the following command to open the configuration file:
+
+```
+interpreter --config
+```
+
+#### Multiple Configuration Files
+
+Open Interpreter supports multiple `config.yaml` files, allowing you to easily switch between configurations via the `--config_file` argument.
+
+**Note**: `--config_file` accepts either a file name or a file path. File names will use the default configuration directory, while file paths will use the specified path.
+
+To create or edit a new configuration, run:
+
+```
+interpreter --config --config_file $config_path
+```
+
+To have Open Interpreter load a specific configuration file run:
+
+```
+interpreter --config_file $config_path
+```
+
+**Note**: Replace `$config_path` with the name of or path to your configuration file.
+
+##### CLI Example
+
+1. Create a new `config.turbo.yaml` file
+   ```
+   interpreter --config --config_file config.turbo.yaml
+   ```
+2. Edit the `config.turbo.yaml` file to set `model` to `gpt-3.5-turbo`
+3. Run Open Interpreter with the `config.turbo.yaml` configuration
+   ```
+   interpreter --config_file config.turbo.yaml
+   ```
+
+##### Python Example
+
+You can also load configuration files when calling Open Interpreter from Python scripts:
+
+```python
+import os
+import interpreter
+
+currentPath = os.path.dirname(os.path.abspath(__file__))
+config_path=os.path.join(currentPath, './config.test.yaml')
+
+interpreter.extend_config(config_path=config_path)
+
+message = "What operating system are we on?"
+
+for chunk in interpreter.chat(message, display=False, stream=True):
+  print(chunk)
+```
+
+## Sample FastAPI Server
+
+The generator update enables Open Interpreter to be controlled via HTTP REST endpoints:
+
+```python
+# server.py
+
+from fastapi import FastAPI
+from fastapi.responses import StreamingResponse
+import interpreter
+
+app = FastAPI()
+
+@app.get("/chat")
+def chat_endpoint(message: str):
+    def event_stream():
+        for result in interpreter.chat(message, stream=True):
+            yield f"data: {result}\n\n"
+
+    return StreamingResponse(event_stream(), media_type="text/event-stream")
+
+@app.get("/history")
+def history_endpoint():
+    return interpreter.messages
+```
+
+```shell
+pip install fastapi uvicorn
+uvicorn server:app --reload
 ```
 
 ## Safety Notice
@@ -206,25 +363,32 @@ You can run `interpreter -y` or set `interpreter.auto_run = True` to bypass this
 
 - Be cautious when requesting commands that modify files or system settings.
 - Watch Open Interpreter like a self-driving car, and be prepared to end the process by closing your terminal.
-- Consider running Open Interpreter in a restricted environment like Google Colab or Replit. These environments are more isolated, reducing the risks associated with executing arbitrary code.
+- Consider running Open Interpreter in a restricted environment like Google Colab or Replit. These environments are more isolated, reducing the risks of executing arbitrary code.
+
+There is **experimental** support for a [safe mode](docs/SAFE_MODE.md) to help mitigate some risks.
 
 ## How Does it Work?
 
-Open Interpreter equips a [function-calling language model](https://platform.openai.com/docs/guides/gpt/function-calling) with an `exec()` function, which accepts a `language` (like "python" or "javascript") and `code` to run.
+Open Interpreter equips a [function-calling language model](https://platform.openai.com/docs/guides/gpt/function-calling) with an `exec()` function, which accepts a `language` (like "Python" or "JavaScript") and `code` to run.
 
 We then stream the model's messages, code, and your system's outputs to the terminal as Markdown.
 
 # Contributing
 
-Thank you for your interest in contributing! We welcome involvement from the community. 
+Thank you for your interest in contributing! We welcome involvement from the community.
 
-Please see our [Contributing Guidelines](/docs/contributing.md) for more details on how to get involved.
+Please see our [Contributing Guidelines](CONTRIBUTING.md) for more details on how to get involved.
+
+# Roadmap
+
+Visit [our roadmap](https://github.com/KillianLucas/open-interpreter/blob/main/docs/ROADMAP.md) to preview the future of Open Interpreter.
 
 ## License
 
-Open Interpreter is licensed under the MIT License. You are permitted to use, copy, modify, distribute, sublicense and sell copies of the software.
+Open Interpreter is licensed under the MIT License. You are permitted to use, copy, modify, distribute, sublicense, and sell copies of the software.
 
 **Note**: This software is not affiliated with OpenAI.
+
 > Having access to a junior programmer working at the speed of your fingertips ... can make new workflows effortless and efficient, as well as open the benefits of programming to new audiences.
 >
 > — _OpenAI's Code Interpreter Release_
