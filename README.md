@@ -6,12 +6,12 @@
     <a href="docs/README_JA.md"><img src="https://img.shields.io/badge/ドキュメント-日本語-white.svg" alt="JA doc"/></a>
     <a href="docs/README_ZH.md"><img src="https://img.shields.io/badge/文档-中文版-white.svg" alt="ZH doc"/></a>
     <a href="docs/README_IN.md"><img src="https://img.shields.io/badge/Hindi-white.svg" alt="IN doc"/></a>
-    <img src="https://img.shields.io/static/v1?label=license&message=MIT&color=white&style=flat" alt="License"/>
+    <img src="https://img.shields.io/static/v1?label=license&message=AGPL&color=white&style=flat" alt="License"/>
     <br>
     <br>
     <b>Let language models run code on your computer.</b><br>
     An open-source, locally running implementation of OpenAI's Code Interpreter.<br>
-    <br><a href="https://openinterpreter.com">Get early access to the desktop app</a>‎ ‎ |‎ ‎ <b><a href="https://docs.openinterpreter.com/">Read our new docs</a></b><br>
+    <br><a href="https://openinterpreter.com">Get early access to the desktop app</a>‎ ‎ |‎ ‎ <a href="https://docs.openinterpreter.com/">Documentation</a><br>
 </p>
 
 <br>
@@ -377,15 +377,11 @@ We then stream the model's messages, code, and your system's outputs to the term
 
 Thank you for your interest in contributing! We welcome involvement from the community.
 
-Please see our [Contributing Guidelines](CONTRIBUTING.md) for more details on how to get involved.
+Please see our [contributing guidelines](docs/CONTRIBUTING.md) for more details on how to get involved.
 
 # Roadmap
 
 Visit [our roadmap](https://github.com/KillianLucas/open-interpreter/blob/main/docs/ROADMAP.md) to preview the future of Open Interpreter.
-
-## License
-
-Open Interpreter is licensed under the MIT License. You are permitted to use, copy, modify, distribute, sublicense, and sell copies of the software.
 
 **Note**: This software is not affiliated with OpenAI.
 
