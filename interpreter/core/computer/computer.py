@@ -1,50 +1,79 @@
-from .languages.applescript import AppleScript
-from .languages.html import HTML
-from .languages.javascript import JavaScript
-from .languages.powershell import PowerShell
-from .languages.python import Python
-from .languages.r import R
-from .languages.shell import Shell
+import json
 
-language_map = {
-    "python": Python,
-    "bash": Shell,
-    "shell": Shell,
-    "sh": Shell,
-    "zsh": Shell,
-    "javascript": JavaScript,
-    "html": HTML,
-    "applescript": AppleScript,
-    "r": R,
-    "powershell": PowerShell,
-}
+from .clipboard.clipboard import Clipboard
+from .display.display import Display
+from .keyboard.keyboard import Keyboard
+from .mouse.mouse import Mouse
+from .os.os import Os
+from .terminal.terminal import Terminal
 
 
 class Computer:
     def __init__(self):
-        self.languages = [Python, Shell, JavaScript, HTML, AppleScript, R, PowerShell]
-        self._active_languages = {}
+        self.terminal = Terminal()
 
-    def run(self, language, code):
-        if language not in self._active_languages:
-            self._active_languages[language] = language_map[language]()
-        try:
-            yield from self._active_languages[language].run(code)
-        except GeneratorExit:
-            self.stop()
+        self.offline = False
+        self.verbose = False
+
+        self.mouse = Mouse(self)
+        self.keyboard = Keyboard(self)
+        self.display = Display(self)
+        self.clipboard = Clipboard(self)
+        self.os = Os(self)
+
+        self.emit_images = True
+
+    # Shortcut for computer.terminal.languages
+    @property
+    def languages(self):
+        return self.terminal.languages
+
+    @languages.setter
+    def languages(self, value):
+        self.terminal.languages = value
+
+    def run(self, *args, **kwargs):
+        """
+        Shortcut for computer.terminal.run
+        """
+        return self.terminal.run(*args, **kwargs)
+
+    def exec(self, code):
+        """
+        It has hallucinated this.
+        Shortcut for computer.terminal.run("shell", code)
+        """
+        return self.terminal.run("shell", code)
 
     def stop(self):
-        for language in self._active_languages.values():
-            language.stop()
+        """
+        Shortcut for computer.terminal.stop
+        """
+        return self.terminal.stop()
 
     def terminate(self):
-        for language_name in list(self._active_languages.keys()):
-            language = self._active_languages[language_name]
-            if (
-                language
-            ):  # Not sure why this is None sometimes. We should look into this
-                language.terminate()
-            del self._active_languages[language_name]
+        """
+        Shortcut for computer.terminal.terminate
+        """
+        return self.terminal.terminate()
 
+    def screenshot(self, *args, **kwargs):
+        """
+        Shortcut for computer.display.screenshot
+        """
+        return self.display.screenshot(*args, **kwargs)
 
-computer = Computer()
+    def to_dict(self):
+        def json_serializable(obj):
+            try:
+                json.dumps(obj)
+                return True
+            except:
+                return False
+
+        return {k: v for k, v in self.__dict__.items() if json_serializable(v)}
+
+    def load_dict(self, data_dict):
+        for key, value in data_dict.items():
+            if hasattr(self, key):
+                setattr(self, key, value)

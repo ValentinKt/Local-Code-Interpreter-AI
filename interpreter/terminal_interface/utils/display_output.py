@@ -4,15 +4,17 @@ import platform
 import subprocess
 import tempfile
 
+from .in_jupyter_notebook import in_jupyter_notebook
+
 
 def display_output(output):
-    if is_running_in_jupyter():
+    if in_jupyter_notebook():
         from IPython.display import HTML, Image, Javascript, display
 
         if output["type"] == "console":
             print(output["content"])
         elif output["type"] == "image":
-            if output["format"] == "base64":
+            if "base64" in output["format"]:
                 # Decode the base64 image data
                 image_data = base64.b64decode(output["content"])
                 display(Image(image_data))
@@ -36,10 +38,22 @@ def display_output_cli(output):
     if output["type"] == "console":
         print(output["content"])
     elif output["type"] == "image":
-        if output["format"] == "base64":
-            with tempfile.NamedTemporaryFile(delete=False, suffix=".png") as tmp_file:
+        if "base64" in output["format"]:
+            if "." in output["format"]:
+                extension = output["format"].split(".")[-1]
+            else:
+                extension = "png"
+            with tempfile.NamedTemporaryFile(
+                delete=False, suffix="." + extension
+            ) as tmp_file:
                 image_data = base64.b64decode(output["content"])
                 tmp_file.write(image_data)
+
+                # # Display in Terminal (DISABLED, i couldn't get it to work)
+                # from term_image.image import from_file
+                # image = from_file(tmp_file.name)
+                # image.draw()
+
                 open_file(tmp_file.name)
         elif output["format"] == "path":
             open_file(output["content"])
@@ -70,13 +84,3 @@ def open_file(file_path):
             subprocess.run(["xdg-open", file_path])
     except Exception as e:
         print(f"Error opening file: {e}")
-
-
-def is_running_in_jupyter():
-    try:
-        from IPython import get_ipython
-
-        if "IPKernelApp" in get_ipython().config:
-            return True
-    except:
-        return False

@@ -20,7 +20,7 @@
 
 <br>
 
-**Update:** ● 0.1.12 supports `interpreter --vision` ([documentation](https://docs.openinterpreter.com/usage/terminal/vision))
+**Important:** ● `v0.1.18` includes breaking changes. Please read our [migration guide](https://github.com/KillianLucas/open-interpreter/blob/main/docs/NCU_MIGRATION_GUIDE.md) if you use Open Interpreter in Python.
 
 <br>
 
@@ -76,7 +76,7 @@ interpreter
 ### Python
 
 ```python
-import interpreter
+from interpreter import interpreter
 
 interpreter.chat("Plot AAPL and META's normalized stock prices") # Executes a single command
 interpreter.chat() # Starts an interactive chat
@@ -192,12 +192,14 @@ interpreter --model command-nightly
 In Python, set the model on the object:
 
 ```python
-interpreter.model = "gpt-3.5-turbo"
+interpreter.llm.model = "gpt-3.5-turbo"
 ```
 
 [Find the appropriate "model" string for your language model here.](https://docs.litellm.ai/docs/providers/)
 
 ### Running Open Interpreter locally
+
+#### Terminal
 
 Open Interpreter uses [LM Studio](https://lmstudio.ai/) to connect to local language models (experimental).
 
@@ -220,6 +222,21 @@ Once the server is running, you can begin your conversation with Open Interprete
 
 > **Note:** Local mode sets your `context_window` to 3000, and your `max_tokens` to 1000. If your model has different requirements, set these parameters manually (see below).
 
+#### Python
+
+Our Python package gives you more control over each setting. To replicate `--local` and connect to LM Studio, use these settings:
+
+```python
+from interpreter import interpreter
+
+interpreter.offline = True # Disables online features like Open Procedures
+interpreter.llm.model = "openai/x" # Tells OI to send messages in OpenAI's format
+interpreter.llm.api_key = "fake_key" # LiteLLM, which we use to talk to LM Studio, requires this
+interpreter.llm.api_base = "http://localhost:1234/v1" # Point this at any OpenAI compatible server
+
+interpreter.chat()
+```
+
 #### Context Window, Max Tokens
 
 You can modify the `max_tokens` and `context_window` (in tokens) of locally running models.
@@ -230,18 +247,18 @@ For local mode, smaller context windows will use less RAM, so we recommend tryin
 interpreter --local --max_tokens 1000 --context_window 3000
 ```
 
-### Debug mode
+### Verbose mode
 
-To help contributors inspect Open Interpreter, `--debug` mode is highly verbose.
+To help contributors inspect Open Interpreter, `--verbose` mode is highly verbose.
 
-You can activate debug mode by using it's flag (`interpreter --debug`), or mid-chat:
+You can activate verbose mode by using it's flag (`interpreter --verbose`), or mid-chat:
 
 ```shell
 $ interpreter
 ...
-> %debug true <- Turns on debug mode
+> %verbose true <- Turns on verbose mode
 
-> %debug false <- Turns off debug mode
+> %verbose false <- Turns off verbose mode
 ```
 
 ### Interactive Mode Commands
@@ -250,12 +267,10 @@ In the interactive mode, you can use the below commands to enhance your experien
 
 **Available Commands:**
 
-- `%debug [true/false]`: Toggle debug mode. Without arguments or with `true` it
-  enters debug mode. With `false` it exits debug mode.
+- `%verbose [true/false]`: Toggle verbose mode. Without arguments or with `true` it
+  enters verbose mode. With `false` it exits verbose mode.
 - `%reset`: Resets the current session's conversation.
 - `%undo`: Removes the previous user message and the AI's response from the message history.
-- `%save_message [path]`: Saves messages to a specified JSON path. If no path is provided, it defaults to `messages.json`.
-- `%load_message [path]`: Loads messages from a specified JSON path. If no path is provided, it defaults to `messages.json`.
 - `%tokens [prompt]`: (_Experimental_) Calculate the tokens that will be sent with the next prompt as context and estimate their cost. Optionally calculate the tokens and estimated cost of a `prompt` if one is provided. Relies on [LiteLLM's `cost_per_token()` method](https://docs.litellm.ai/docs/completion/token_usage#2-cost_per_token) for estimated costs.
 - `%help`: Show the help message.
 
@@ -291,7 +306,7 @@ interpreter --config_file $config_path
 
 **Note**: Replace `$config_path` with the name of or path to your configuration file.
 
-##### CLI Example
+##### Example
 
 1. Create a new `config.turbo.yaml` file
    ```
@@ -303,25 +318,6 @@ interpreter --config_file $config_path
    interpreter --config_file config.turbo.yaml
    ```
 
-##### Python Example
-
-You can also load configuration files when calling Open Interpreter from Python scripts:
-
-```python
-import os
-import interpreter
-
-currentPath = os.path.dirname(os.path.abspath(__file__))
-config_path=os.path.join(currentPath, './config.test.yaml')
-
-interpreter.extend_config(config_path=config_path)
-
-message = "What operating system are we on?"
-
-for chunk in interpreter.chat(message, display=False, stream=True):
-  print(chunk)
-```
-
 ## Sample FastAPI Server
 
 The generator update enables Open Interpreter to be controlled via HTTP REST endpoints:
@@ -331,7 +327,7 @@ The generator update enables Open Interpreter to be controlled via HTTP REST end
 
 from fastapi import FastAPI
 from fastapi.responses import StreamingResponse
-import interpreter
+from interpreter import interpreter
 
 app = FastAPI()
 
