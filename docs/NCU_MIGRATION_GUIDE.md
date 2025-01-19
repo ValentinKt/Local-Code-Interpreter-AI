@@ -1,8 +1,6 @@
 # `0.2.0` Migration Guide
 
-> We've included all the following breaking changes in `0.1.18` (NCU Preview), so you can be ready once `0.2.0` is released.
-
-Open Interpreter is changing! This guide will help you migrate your application to `0.2.0`, also called the _New Computer Update_ (NCU), the latest major version of Open Interpreter.
+Open Interpreter is [changing](https://changes.openinterpreter.com/log/the-new-computer-update). This guide will help you migrate your application to `0.2.0`, also called the _New Computer Update_ (NCU), the latest major version of Open Interpreter.
 
 ## A New Start
 
@@ -40,7 +38,7 @@ All stateless LLM attributes have been moved to `interpreter.llm`:
 - `interpreter.api_version` → `interpreter.llm.api_version`
 - `interpreter.api_base` → `interpreter.llm.api_base`
 
-This is reflected **1)** in Python applications using Open Interpreter and **2)** in your configuration file for OI's terminal interface, which can be edited via `interpreter --config`.
+This is reflected **1)** in Python applications using Open Interpreter and **2)** in your profile for OI's terminal interface, which can be edited via `interpreter --profiles`.
 
 ## New Static Messages Structure
 
@@ -55,7 +53,6 @@ This is reflected **1)** in Python applications using Open Interpreter and **2)*
 
 ```python
 [
-
   {"role": "user", "type": "message", "content": "Please create a plot from this data and display it as an image and then as HTML."}, # implied format: text (only one format for type message)
   {"role": "user", "type": "image", "format": "path", "content": "path/to/image.png"}
   {"role": "user", "type": "file", "content": "/path/to/file.pdf"} # implied format: path (only one format for type file)

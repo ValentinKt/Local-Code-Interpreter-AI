@@ -3,10 +3,12 @@
 <p align="center">
     <a href="https://discord.gg/6p3fD6rBVm">
         <img alt="Discord" src="https://img.shields.io/discord/1146610656779440188?logo=discord&style=flat&logoColor=white"/></a>
+    <a href="README_ES.md"> <img src="https://img.shields.io/badge/Español-white.svg" alt="ES doc"/></a>
     <a href="../README.md"><img src="https://img.shields.io/badge/english-document-white.svg" alt="EN doc"></a>
     <a href="README_ZH.md"><img src="https://img.shields.io/badge/文档-中文版-white.svg" alt="ZH doc"/></a>
+    <a href="README_UK.md"><img src="https://img.shields.io/badge/Українська-white.svg" alt="UK doc"/></a>
     <a href="README_IN.md"><img src="https://img.shields.io/badge/Hindi-white.svg" alt="IN doc"/></a>
-    <img src="https://img.shields.io/static/v1?label=license&message=AGPL&color=white&style=flat" alt="License"/>
+    <a href="../LICENSE"><img src="https://img.shields.io/static/v1?label=license&message=AGPL&color=white&style=flat" alt="License"/></a>
     <br>
     <br>
     <b>自然言語で指示するだけでコードを書いて実行までしてくれる。</b><br>
@@ -16,7 +18,7 @@
 
 <br>
 
-![poster](https://github.com/KillianLucas/open-interpreter/assets/63927363/08f0d493-956b-4d49-982e-67d4b20c4b56)
+![poster](https://github.com/OpenInterpreter/open-interpreter/assets/63927363/08f0d493-956b-4d49-982e-67d4b20c4b56)
 
 <br>
 
@@ -49,7 +51,7 @@ interpreter
 
 ## デモ
 
-https://github.com/KillianLucas/open-interpreter/assets/63927363/37152071-680d-4423-9af3-64836a6f7b60
+https://github.com/OpenInterpreter/open-interpreter/assets/63927363/37152071-680d-4423-9af3-64836a6f7b60
 
 #### Google Colab でも対話形式のデモを利用できます:
 
@@ -152,7 +154,7 @@ interpreter.chat("ついでに、字幕を大きくできますか？")
 プログラム的チャットで Open Interpreter は、会話の履歴を記憶しています。新しくやり直したい場合は、リセットすることができます:
 
 ```python
-interpreter.reset()
+interpreter.messages = []
 ```
 
 ### チャットの保存と復元
@@ -161,7 +163,7 @@ interpreter.reset()
 
 ```python
 messages = interpreter.chat("私の名前は田中です。") # 'messages'にメッセージを保存
-interpreter.reset() # インタープリタをリセット（"田中"は忘れられる）
+interpreter.messages = [] # インタープリタをリセット（"田中"は忘れられる）
 
 interpreter.messages = messages # 'messages'からチャットを再開（"田中"は記憶される）
 ```
@@ -199,15 +201,23 @@ interpreter.llm.model = "gpt-3.5-turbo"
 
 ### ローカルのモデルを実行する
 
-Open Interpreter は、ローカルの言語モデルへの接続に [LM Studio](https://lmstudio.ai/) を実験的に使用しています。
+Open Interpreter は、OpenAI 互換サーバーを使用してモデルをローカルで実行できます。 (LM Studio、jan.ai、ollam など)
 
-コマンドラインから `interpreter` をローカルモードで実行するだけです:
+推論サーバーの api_base URL を指定して「interpreter」を実行するだけです (LM Studio の場合、デフォルトでは「http://localhost:1234/v1」です)。
+
+```shell
+interpreter --api_base "http://localhost:1234/v1" --api_key "fake_key"
+```
+
+あるいは、サードパーティのソフトウェアをインストールせずに、単に実行するだけで Llamafile を使用することもできます。
 
 ```shell
 interpreter --local
 ```
 
-**バックグラウンドで LM Studio を実行する必要があります。**
+より詳細なガイドについては、[Mike Bird によるこのビデオ](https://www.youtube.com/watch?v=CEs51hGWuGU?si=cN7f6QhfT4edfG5H) をご覧ください。
+
+**LM Studio をバックグラウンドで使用する方法**
 
 1. [https://lmstudio.ai/](https://lmstudio.ai/)からダウンロードして起動します。
 2. モデルを選択し、**↓ ダウンロード** をクリックします。
@@ -215,8 +225,6 @@ interpreter --local
 4. 上部でモデルを選択し、**サーバーを起動** をクリックします。
 
 サーバーが稼働を開始したら、Open Interpreter との会話を開始できます。
-
-（`interpreter --local` コマンドを実行した際にも、上記の手順が表示されます。）
 
 > **注意:** ローカルモードでは、`context_window` を 3000 に、`max_tokens` を 1000 に設定します。モデルによって異なる要件がある場合、これらのパラメータを手動で設定してください（下記参照）。
 
@@ -380,7 +388,7 @@ Open Interpreter は、[関数が呼び出せる言語モデル](https://platfor
 
 # ロードマップ
 
-Open Interpreter の未来を一足先に見るために、[私たちのロードマップ](https://github.com/KillianLucas/open-interpreter/blob/main/docs/ROADMAP.md)をご覧ください。
+Open Interpreter の未来を一足先に見るために、[私たちのロードマップ](https://github.com/OpenInterpreter/open-interpreter/blob/main/docs/ROADMAP.md)をご覧ください。
 
 **注意**: このソフトウェアは OpenAI とは関連していません。
 

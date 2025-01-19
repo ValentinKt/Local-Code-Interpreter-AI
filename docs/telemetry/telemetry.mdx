@@ -12,11 +12,11 @@ If you prefer to opt out of telemetry, you can do this in two ways.
 
 ### Python
 
-Set `anonymized_telemetry` to `false` on the `interpreter` object:
+Set `disable_telemetry` to `true` on the `interpreter` object:
 
 ```python
 from interpreter import interpreter
-interpreter.anonymized_telemetry = False
+interpreter.disable_telemetry = True
 ```
 
 ### Terminal
@@ -27,22 +27,22 @@ Use the `--disable_telemetry` flag:
 interpreter --disable_telemetry
 ```
 
-### Configuration File
+### Profile
 
-Set `anonymized_telemetry` to `false`. This will persist to future terminal sessions:
+Set `disable_telemetry` to `true`. This will persist to future terminal sessions:
 
 ```yaml
-anonymized_telemetry: false
+disable_telemetry: true
 ```
 
 ### Environment Variables
 
-Set `ANONYMIZED_TELEMETRY` to `False` in your shell or server environment.
+Set `DISABLE_TELEMETRY` to `true` in your shell or server environment.
 
 If you are running Open Interpreter on your local computer with `docker-compose` you can set this value in an `.env` file placed in the same directory as the `docker-compose.yml` file:
 
 ```
-ANONYMIZED_TELEMETRY=False
+DISABLE_TELEMETRY=true
 ```
 
 # What do you track?
@@ -55,10 +55,14 @@ We will only track usage details that help us make product decisions, specifical
 
 We **do not** collect personally-identifiable or sensitive information, such as: usernames, hostnames, file names, environment variables, or hostnames of systems being tested.
 
-To view the list of events we track, you may reference the **[code](https://github.com/KillianLucas/open-interpreter/tree/main/interpreter/core)**
+To view the list of events we track, you may reference the **[code](https://github.com/OpenInterpreter/open-interpreter/tree/main/interpreter/core)**
 
 ## Where is telemetry information stored?
 
 We use **[Posthog](https://posthog.com/)** to store and visualize telemetry data.
 
-<Info>Posthog is an open source platform for product analytics. Learn more about Posthog on **[posthog.com](https://posthog.com/)** or **[github.com/posthog](https://github.com/posthog/posthog)**</Info>
+<Info>
+  Posthog is an open source platform for product analytics. Learn more about
+  Posthog on **[posthog.com](https://posthog.com/)** or
+  **[github.com/posthog](https://github.com/posthog/posthog)**
+</Info>

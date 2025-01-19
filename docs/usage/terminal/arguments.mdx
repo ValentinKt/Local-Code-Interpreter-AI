@@ -12,15 +12,15 @@ title: Arguments
 
 **[Configuration](/docs/usage/terminal/arguments#Configuration)**
 
-`--config`, `--config_file`, `--custom_instructions`, `--system_message`.
+`--profiles`, `--profile`, `--custom_instructions`, `--system_message`.
 
 **[Options](/docs/usage/terminal/arguments#options)**
 
-`--safe_mode`, `--auto_run`, `--force_task_completion`, `--verbose`, `--max_budget`, `--speak_messages`, `--version`.
+`--safe_mode`, `--auto_run`, `--loop`, `--verbose`, `--max_budget`, `--speak_messages`, `--multi_line`.
 
 **[Other](/docs/usage/terminal/arguments#other)**
 
-`--conversations`, `--help`.
+`--version`, `--help`.
 
 ---
 
@@ -94,7 +94,7 @@ fast: true
 
 #### `--local` or `-l`
 
-Run the model locally. Check the [local mode page](/language-model-setup/local-models/overview) for more information.
+Run the model locally. Check the [models page](/language-model-setup/introduction) for more information.
 
 <CodeGroup>
 
@@ -230,6 +230,14 @@ llm_supports_functions: true
 ```
 
 </CodeGroup>
+#### `--no-llm_supports_functions`
+
+Inform Open Interpreter that the language model you're using does not support function calling.
+
+<CodeGroup>
+  ```bash Terminal interpreter --no-llm_supports_functions ```
+</CodeGroup>
+
 #### `--llm_supports_vision` or `-lsv`
 
 Inform Open Interpreter that the language model you're using supports vision.
@@ -249,24 +257,24 @@ llm_supports_vision: true
 
 ## Configuration
 
-#### `--config`
+#### `--profiles`
 
-Opens the configuration yaml file in your default editor.
+Opens the directory containing all profiles. They can be edited in your default editor.
 
 <CodeGroup>
 ```bash Terminal
-interpreter --config
+interpreter --profilees
 ```
 
 </CodeGroup>
 
-#### `--config_file` or `-cf`
+#### `--profile` or `-p`
 
-Optionally set a custom config file to use.
+Optionally set a profile to use.
 
 <CodeGroup>
 ```bash Terminal
-interpreter --config_file "/config.yaml"
+interpreter --profile "default.yaml"
 ```
 
 </CodeGroup>
@@ -288,7 +296,7 @@ custom_instructions: "This is a custom instruction."
 
 #### `--system_message` or `-s`
 
-We don't recommend modifying the system message, as doing so opts you out of future updates to the system message. Use `--custom_instructions` instead, to add relevant information to the system message. If you must modify the system message, you can do so by using this argument, or by opening the config file using `--config`.
+We don't recommend modifying the system message, as doing so opts you out of future updates to the system message. Use `--custom_instructions` instead, to add relevant information to the system message. If you must modify the system message, you can do so by using this argument, or by opening the profile using `--profiles`.
 
 <CodeGroup>
 ```bash Terminal
@@ -298,19 +306,6 @@ interpreter --system_message "You are Open Interpreter..."
 ```yaml Config
 system_message: "You are Open Interpreter..."
 ```
-
-</CodeGroup>
-
-#### `--reset_config`
-
-Resets the config file to the default settings.
-
-<CodeGroup>
-```bash Terminal
-interpreter --reset_config
-```
-
-</CodeGroup>
 
 ## Options
 
@@ -346,17 +341,17 @@ auto_run: true
 
 </CodeGroup>
 
-#### `--force_task_completion` or `-fc`
+#### `--loop`
 
 Runs Open Interpreter in a loop, requiring it to admit to completing or failing every task.
 
 <CodeGroup>
 ```bash Terminal
-interpreter --force_task_completion
+interpreter --loop
 ```
 
 ```yaml Config
-force_task_completion: true
+loop: true
 ```
 
 </CodeGroup>
@@ -408,6 +403,21 @@ speak_messages: true
 
 </CodeGroup>
 
+#### `--multi_line` or `-ml`
+
+Enable multi-line inputs starting and ending with ` ``` `
+
+<CodeGroup>
+```bash Terminal
+interpreter --multi_line
+```
+
+```yaml Config
+multi_line: true
+```
+
+</CodeGroup>
+
 ---
 
 ## Other
@@ -417,17 +427,6 @@ speak_messages: true
 Get the current installed version number of Open Interpreter.
 
 <CodeGroup>```bash Terminal interpreter --version ```</CodeGroup>
-
-#### `--conversations`
-
-Display a list of previous conversations.
-
-<CodeGroup>
-```bash Terminal
-interpreter --conversations
-```
-
-</CodeGroup>
 
 #### `--help` or `-h`
 

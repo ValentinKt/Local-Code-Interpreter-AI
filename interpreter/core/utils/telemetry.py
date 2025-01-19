@@ -1,20 +1,22 @@
 """
 Sends anonymous telemetry to posthog. This helps us know how people are using OI / what needs our focus.
 
-Disable this by running `interpreter --disable_telemetry` or `interpreter.anonymized_telemetry = False` or setting the `ANONYMIZED_TELEMETRY` os var to `false`.
+Disable anonymous telemetry by execute one of below:
+1. Running `interpreter --disable_telemetry` in command line.
+2. Executing `interpreter.disable_telemetry = True` in Python.
+3. Setting the `DISABLE_TELEMETRY` os var to `true`.
 
 based on ChromaDB's telemetry: https://github.com/chroma-core/chroma/tree/main/chromadb/telemetry/product
 """
 
+import contextlib
+import json
 import os
+import threading
 import uuid
 
 import pkg_resources
-from posthog import Posthog
-
-posthog = Posthog(
-    "phc_6cmXy4MEbLfNGezqGjuUTY8abLu0sAwtGzZFpQW97lc", host="https://app.posthog.com"
-)
+import requests
 
 
 def get_or_create_uuid():
@@ -43,13 +45,20 @@ user_id = get_or_create_uuid()
 
 
 def send_telemetry(event_name, properties=None):
+    if properties is None:
+        properties = {}
+    properties["oi_version"] = pkg_resources.get_distribution(
+        "open-interpreter"
+    ).version
     try:
-        if properties == None:
-            properties = {}
-        properties["oi_version"] = pkg_resources.get_distribution(
-            "open-interpreter"
-        ).version
-        posthog.capture(user_id, event_name, properties)
+        url = "https://app.posthog.com/capture"
+        headers = {"Content-Type": "application/json"}
+        data = {
+            "api_key": "phc_6cmXy4MEbLfNGezqGjuUTY8abLu0sAwtGzZFpQW97lc",
+            "event": event_name,
+            "properties": properties,
+            "distinct_id": user_id,
+        }
+        requests.post(url, headers=headers, data=json.dumps(data))
     except:
-        # Non blocking
         pass

@@ -8,7 +8,7 @@ from .subprocess_language import SubprocessLanguage
 class Shell(SubprocessLanguage):
     file_extension = "sh"
     name = "Shell"
-    aliases = ["bash", "sh", "zsh"]
+    aliases = ["bash", "sh", "zsh", "batch", "bat"]
 
     def __init__(
         self,
@@ -45,7 +45,11 @@ def preprocess_shell(code):
 
     # Add commands that tell us what the active line is
     # if it's multiline, just skip this. soon we should make it work with multiline
-    if not has_multiline_commands(code):
+    if (
+        not has_multiline_commands(code)
+        and os.environ.get("INTERPRETER_ACTIVE_LINE_DETECTION", "True").lower()
+        == "true"
+    ):
         code = add_active_line_prints(code)
 
     # Add end command (we'll be listening for this so we know when it ends)

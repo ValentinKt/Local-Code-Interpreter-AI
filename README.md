@@ -1,32 +1,40 @@
 <h1 align="center">● Open Interpreter</h1>
 
 <p align="center">
-    <a href="https://discord.gg/6p3fD6rBVm">
+    <a href="https://discord.gg/Hvz9Axh84z">
         <img alt="Discord" src="https://img.shields.io/discord/1146610656779440188?logo=discord&style=flat&logoColor=white"/></a>
     <a href="docs/README_JA.md"><img src="https://img.shields.io/badge/ドキュメント-日本語-white.svg" alt="JA doc"/></a>
     <a href="docs/README_ZH.md"><img src="https://img.shields.io/badge/文档-中文版-white.svg" alt="ZH doc"/></a>
+    <a href="docs/README_ES.md"> <img src="https://img.shields.io/badge/Español-white.svg" alt="ES doc"/></a>
+    <a href="docs/README_UK.md"><img src="https://img.shields.io/badge/Українська-white.svg" alt="UK doc"/></a>
     <a href="docs/README_IN.md"><img src="https://img.shields.io/badge/Hindi-white.svg" alt="IN doc"/></a>
-    <img src="https://img.shields.io/static/v1?label=license&message=AGPL&color=white&style=flat" alt="License"/>
+    <a href="LICENSE"><img src="https://img.shields.io/static/v1?label=license&message=AGPL&color=white&style=flat" alt="License"/></a>
     <br>
-    <br>
-    <b>Let language models run code on your computer.</b><br>
-    An open-source, locally running implementation of OpenAI's Code Interpreter.<br>
-    <br><a href="https://openinterpreter.com">Get early access to the desktop app</a>‎ ‎ |‎ ‎ <a href="https://docs.openinterpreter.com/">Documentation</a><br>
+    <br><a href="https://0ggfznkwh4j.typeform.com/to/G21i9lJ2">Get early access to the desktop app</a>‎ ‎ |‎ ‎ <a href="https://docs.openinterpreter.com/">Documentation</a><br>
 </p>
 
+> [!NOTE]
+> **Open Interpreter 1.0** is almost here.
+>
+> Please help test the [development branch](https://github.com/OpenInterpreter/open-interpreter/tree/development) and share your experience in the [Discord](https://discord.gg/Hvz9Axh84z):
+> ```
+> pip install git+https://github.com/OpenInterpreter/open-interpreter.git@development
+> interpreter --help
+> ```
+
 <br>
 
-![poster](https://github.com/KillianLucas/open-interpreter/assets/63927363/08f0d493-956b-4d49-982e-67d4b20c4b56)
+<img alt="local_explorer" src="https://github.com/OpenInterpreter/open-interpreter/assets/63927363/d941c3b4-b5ad-4642-992c-40edf31e2e7a">
 
 <br>
-
-**Important:** ● `v0.1.18` includes breaking changes. Please read our [migration guide](https://github.com/KillianLucas/open-interpreter/blob/main/docs/NCU_MIGRATION_GUIDE.md) if you use Open Interpreter in Python.
-
+</p>
 <br>
 
 ```shell
 pip install open-interpreter
 ```
+
+> Not working? Read our [setup guide](https://docs.openinterpreter.com/getting-started/setup).
 
 ```shell
 interpreter
@@ -49,13 +57,13 @@ This provides a natural-language interface to your computer's general-purpose ca
 
 ## Demo
 
-https://github.com/KillianLucas/open-interpreter/assets/63927363/37152071-680d-4423-9af3-64836a6f7b60
+https://github.com/OpenInterpreter/open-interpreter/assets/63927363/37152071-680d-4423-9af3-64836a6f7b60
 
 #### An interactive demo is also available on Google Colab:
 
 [![Open In Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/drive/1WKmRXZgsErej2xUriKzxrEAXdxMSgWbb?usp=sharing)
 
-#### Along with an example implementation of a voice interface (inspired by _Her_):
+#### Along with an example voice interface, inspired by _Her_:
 
 [![Open In Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/drive/1NojYGHDgxH6Y1G1oxThEBBb2AtyODBIK)
 
@@ -81,6 +89,10 @@ from interpreter import interpreter
 interpreter.chat("Plot AAPL and META's normalized stock prices") # Executes a single command
 interpreter.chat() # Starts an interactive chat
 ```
+
+### GitHub Codespaces
+
+Press the `,` key on this repository's GitHub page to create a codespace. After a moment, you'll receive a cloud virtual machine environment pre-installed with open-interpreter. You can then start interacting with it directly and freely confirm its execution of system commands without worrying about damaging the system.
 
 ## Comparison to ChatGPT's Code Interpreter
 
@@ -152,7 +164,7 @@ interpreter.chat("These look great but can you make the subtitles bigger?")
 In Python, Open Interpreter remembers conversation history. If you want to start fresh, you can reset it:
 
 ```python
-interpreter.reset()
+interpreter.messages = []
 ```
 
 ### Save and Restore Chats
@@ -161,7 +173,7 @@ interpreter.reset()
 
 ```python
 messages = interpreter.chat("My name is Killian.") # Save messages to 'messages'
-interpreter.reset() # Reset interpreter ("Killian" will be forgotten)
+interpreter.messages = [] # Reset interpreter ("Killian" will be forgotten)
 
 interpreter.messages = messages # Resume chat from 'messages' ("Killian" will be remembered)
 ```
@@ -201,15 +213,23 @@ interpreter.llm.model = "gpt-3.5-turbo"
 
 #### Terminal
 
-Open Interpreter uses [LM Studio](https://lmstudio.ai/) to connect to local language models (experimental).
+Open Interpreter can use OpenAI-compatible server to run models locally. (LM Studio, jan.ai, ollama etc)
 
-Simply run `interpreter` in local mode from the command line:
+Simply run `interpreter` with the api_base URL of your inference server (for LM studio it is `http://localhost:1234/v1` by default):
+
+```shell
+interpreter --api_base "http://localhost:1234/v1" --api_key "fake_key"
+```
+
+Alternatively you can use Llamafile without installing any third party software just by running
 
 ```shell
 interpreter --local
 ```
 
-**You will need to run LM Studio in the background.**
+for a more detailed guide check out [this video by Mike Bird](https://www.youtube.com/watch?v=CEs51hGWuGU?si=cN7f6QhfT4edfG5H)
+
+**How to run LM Studio in the background.**
 
 1. Download [https://lmstudio.ai/](https://lmstudio.ai/) then start it.
 2. Select a model then click **↓ Download**.
@@ -218,13 +238,11 @@ interpreter --local
 
 Once the server is running, you can begin your conversation with Open Interpreter.
 
-(When you run the command `interpreter --local`, the steps above will be displayed.)
-
 > **Note:** Local mode sets your `context_window` to 3000, and your `max_tokens` to 1000. If your model has different requirements, set these parameters manually (see below).
 
 #### Python
 
-Our Python package gives you more control over each setting. To replicate `--local` and connect to LM Studio, use these settings:
+Our Python package gives you more control over each setting. To replicate and connect to LM Studio, use these settings:
 
 ```python
 from interpreter import interpreter
@@ -241,7 +259,7 @@ interpreter.chat()
 
 You can modify the `max_tokens` and `context_window` (in tokens) of locally running models.
 
-For local mode, smaller context windows will use less RAM, so we recommend trying a much shorter window (~1000) if it's is failing / if it's slow. Make sure `max_tokens` is less than `context_window`.
+For local mode, smaller context windows will use less RAM, so we recommend trying a much shorter window (~1000) if it's failing / if it's slow. Make sure `max_tokens` is less than `context_window`.
 
 ```shell
 interpreter --local --max_tokens 1000 --context_window 3000
@@ -249,9 +267,9 @@ interpreter --local --max_tokens 1000 --context_window 3000
 
 ### Verbose mode
 
-To help contributors inspect Open Interpreter, `--verbose` mode is highly verbose.
+To help you inspect Open Interpreter we have a `--verbose` mode for debugging.
 
-You can activate verbose mode by using it's flag (`interpreter --verbose`), or mid-chat:
+You can activate verbose mode by using its flag (`interpreter --verbose`), or mid-chat:
 
 ```shell
 $ interpreter
@@ -274,49 +292,27 @@ In the interactive mode, you can use the below commands to enhance your experien
 - `%tokens [prompt]`: (_Experimental_) Calculate the tokens that will be sent with the next prompt as context and estimate their cost. Optionally calculate the tokens and estimated cost of a `prompt` if one is provided. Relies on [LiteLLM's `cost_per_token()` method](https://docs.litellm.ai/docs/completion/token_usage#2-cost_per_token) for estimated costs.
 - `%help`: Show the help message.
 
-### Configuration
+### Configuration / Profiles
 
-Open Interpreter allows you to set default behaviors using a `config.yaml` file.
+Open Interpreter allows you to set default behaviors using `yaml` files.
 
 This provides a flexible way to configure the interpreter without changing command-line arguments every time.
 
-Run the following command to open the configuration file:
+Run the following command to open the profiles directory:
 
 ```
-interpreter --config
+interpreter --profiles
 ```
 
-#### Multiple Configuration Files
+You can add `yaml` files there. The default profile is named `default.yaml`.
 
-Open Interpreter supports multiple `config.yaml` files, allowing you to easily switch between configurations via the `--config_file` argument.
+#### Multiple Profiles
 
-**Note**: `--config_file` accepts either a file name or a file path. File names will use the default configuration directory, while file paths will use the specified path.
-
-To create or edit a new configuration, run:
+Open Interpreter supports multiple `yaml` files, allowing you to easily switch between configurations:
 
 ```
-interpreter --config --config_file $config_path
+interpreter --profile my_profile.yaml
 ```
-
-To have Open Interpreter load a specific configuration file run:
-
-```
-interpreter --config_file $config_path
-```
-
-**Note**: Replace `$config_path` with the name of or path to your configuration file.
-
-##### Example
-
-1. Create a new `config.turbo.yaml` file
-   ```
-   interpreter --config --config_file config.turbo.yaml
-   ```
-2. Edit the `config.turbo.yaml` file to set `model` to `gpt-3.5-turbo`
-3. Run Open Interpreter with the `config.turbo.yaml` configuration
-   ```
-   interpreter --config_file config.turbo.yaml
-   ```
 
 ## Sample FastAPI Server
 
@@ -349,6 +345,12 @@ pip install fastapi uvicorn
 uvicorn server:app --reload
 ```
 
+You can also start a server identical to the one above by simply running `interpreter.server()`.
+
+## Android
+
+The step-by-step guide for installing Open Interpreter on your Android device can be found in the [open-interpreter-termux repo](https://github.com/MikeBirdTech/open-interpreter-termux).
+
 ## Safety Notice
 
 Since generated code is executed in your local environment, it can interact with your files and system settings, potentially leading to unexpected outcomes like data loss or security risks.
@@ -361,7 +363,7 @@ You can run `interpreter -y` or set `interpreter.auto_run = True` to bypass this
 - Watch Open Interpreter like a self-driving car, and be prepared to end the process by closing your terminal.
 - Consider running Open Interpreter in a restricted environment like Google Colab or Replit. These environments are more isolated, reducing the risks of executing arbitrary code.
 
-There is **experimental** support for a [safe mode](docs/SAFE_MODE.md) to help mitigate some risks.
+There is **experimental** support for a [safe mode](https://github.com/OpenInterpreter/open-interpreter/blob/main/docs/SAFE_MODE.md) to help mitigate some risks.
 
 ## How Does it Work?
 
@@ -369,17 +371,47 @@ Open Interpreter equips a [function-calling language model](https://platform.ope
 
 We then stream the model's messages, code, and your system's outputs to the terminal as Markdown.
 
+# Access Documentation Offline
+
+The full [documentation](https://docs.openinterpreter.com/) is accessible on-the-go without the need for an internet connection.
+
+[Node](https://nodejs.org/en) is a pre-requisite:
+
+- Version 18.17.0 or any later 18.x.x version.
+- Version 20.3.0 or any later 20.x.x version.
+- Any version starting from 21.0.0 onwards, with no upper limit specified.
+
+Install [Mintlify](https://mintlify.com/):
+
+```bash
+npm i -g mintlify@latest
+```
+
+Change into the docs directory and run the appropriate command:
+
+```bash
+# Assuming you're at the project's root directory
+cd ./docs
+
+# Run the documentation server
+mintlify dev
+```
+
+A new browser window should open. The documentation will be available at [http://localhost:3000](http://localhost:3000) as long as the documentation server is running.
+
 # Contributing
 
 Thank you for your interest in contributing! We welcome involvement from the community.
 
-Please see our [contributing guidelines](docs/CONTRIBUTING.md) for more details on how to get involved.
+Please see our [contributing guidelines](https://github.com/OpenInterpreter/open-interpreter/blob/main/docs/CONTRIBUTING.md) for more details on how to get involved.
 
 # Roadmap
 
-Visit [our roadmap](https://github.com/KillianLucas/open-interpreter/blob/main/docs/ROADMAP.md) to preview the future of Open Interpreter.
+Visit [our roadmap](https://github.com/OpenInterpreter/open-interpreter/blob/main/docs/ROADMAP.md) to preview the future of Open Interpreter.
 
 **Note**: This software is not affiliated with OpenAI.
+
+![thumbnail-ncu](https://github.com/OpenInterpreter/open-interpreter/assets/63927363/1b19a5db-b486-41fd-a7a1-fe2028031686)
 
 > Having access to a junior programmer working at the speed of your fingertips ... can make new workflows effortless and efficient, as well as open the benefits of programming to new audiences.
 >
